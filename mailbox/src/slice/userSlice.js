@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_ID } from "../Services/api";
 
 export const fetchUserData = createAsyncThunk(
   "user/fetchUserData",
   async (idToken, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyC0fisuDptkQLsA5PXa2PX3_0y5cwm4hK0",
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${API_ID}`,
         { idToken }
       );
       return response.data.users[0];
@@ -21,7 +22,7 @@ export const login = createAsyncThunk(
   async ({ email, password }, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC0fisuDptkQLsA5PXa2PX3_0y5cwm4hK0",
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_ID}`,
         { email, password, returnSecureToken: true }
       );
       const { idToken } = response.data;
@@ -41,7 +42,7 @@ export const register = createAsyncThunk(
     console.log(email, password);
     try {
       const response = await axios.post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC0fisuDptkQLsA5PXa2PX3_0y5cwm4hK0",
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_ID}`,
         { email, password, returnSecureToken: true }
       );
       const { idToken } = response.data;
@@ -61,7 +62,7 @@ export const sendEmailVerification = createAsyncThunk(
   async (idToken, { rejectWithValue }) => {
     try {
       await axios.post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyC0fisuDptkQLsA5PXa2PX3_0y5cwm4hK0",
+        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_ID}`,
         {
           requestType: "VERIFY_EMAIL",
           idToken,

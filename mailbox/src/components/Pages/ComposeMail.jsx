@@ -16,7 +16,7 @@ import draftToHtml from "draftjs-to-html";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import axios from "axios";
 
-export default function ComposeMail() {
+export default function ComposeMail({ setToggleCompose }) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [formData, setFormData] = useState({
     to: "",
@@ -24,6 +24,10 @@ export default function ComposeMail() {
     subject: "",
     body: "",
   });
+
+  const hideComponseMail = () => {
+    setToggleCompose(false);
+  };
 
   const onEditorStateChange = (newState) => {
     setEditorState(newState);
@@ -61,60 +65,82 @@ export default function ComposeMail() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-background">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle>Compose Email</CardTitle>
-          <CardDescription>Fill out the form to send an email.</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+    <div className="fixed z-30 bottom-50 right-2 w-96 h-96 pt-2">
+      <div className="absolute top-8 right-4" onClick={hideComponseMail}>
+        <XIcon className="h-5 w-5" />
+      </div>
+      <div className="flex flex-col bg-background">
+        <Card className="w-full pt-2 max-w-2xl mt-4">
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2 ">
+                  <Label htmlFor="to">To</Label>
+                  <Input
+                    id="to"
+                    placeholder="Enter email addresses"
+                    value={formData.to}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cc">CC</Label>
+                  <Input
+                    id="cc"
+                    placeholder="Enter email addresses"
+                    value={formData.cc}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
-                <Label htmlFor="to">To</Label>
+                <Label htmlFor="subject">Subject</Label>
                 <Input
-                  id="to"
-                  placeholder="Enter email addresses"
-                  value={formData.to}
+                  id="subject"
+                  placeholder="Enter subject"
+                  value={formData.subject}
                   onChange={handleChange}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="cc">CC</Label>
-                <Input
-                  id="cc"
-                  placeholder="Enter email addresses"
-                  value={formData.cc}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                placeholder="Enter subject"
-                value={formData.subject}
-                onChange={handleChange}
-              />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="body">Body</Label>
-              <Editor
-                editorState={editorState}
-                toolbarClassName="toolbarClassName"
-                wrapperClassName="wrapperClassName"
-                editorClassName="editorClassName"
-                onEditorStateChange={onEditorStateChange}
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-end">
-            <Button type="submit">Send</Button>
-          </CardFooter>
-        </form>
-      </Card>
+              <div className="space-y-2">
+                <Label htmlFor="body">Body</Label>
+                <Editor
+                  editorState={editorState}
+                  toolbarClassName="toolbarClassName"
+                  wrapperClassName="wrapperClassName"
+                  editorClassName="editorClassName"
+                  onEditorStateChange={onEditorStateChange}
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <Button type="submit">Send</Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
+  );
+}
+
+function XIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
   );
 }

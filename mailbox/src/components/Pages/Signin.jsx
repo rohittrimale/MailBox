@@ -15,7 +15,7 @@ import {
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "../ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Label } from "../ui/label";
 import { login } from "../../slice/userSlice";
 
@@ -32,6 +32,7 @@ const FormSchema = z.object({
 });
 
 export function Signin() {
+  const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -46,6 +47,7 @@ export function Signin() {
     console.log(values);
     try {
       const data = await dispatch(login({ email, password }));
+      navigate("/");
       console.log(data);
     } catch (error) {
       console.log(error);

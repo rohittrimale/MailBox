@@ -12,17 +12,23 @@ import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Input } from "../ui/input";
 import { CircleBackslashIcon } from "@radix-ui/react-icons";
 import ComposeMail from "./ComposeMail";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [toggleCompose, setToggleCompose] = useState(false);
+  const [messageType, setMessageType] = useState("inbox"); // Add messageType state
 
   const toggleComposes = () => {
     setToggleCompose((prev) => !prev);
+  };
+
+  const handleNavClick = (type) => {
+    setMessageType(type);
   };
 
   return (
@@ -39,7 +45,8 @@ export default function Home() {
           <SheetContent side="left" className="sm:max-w-xs">
             <div className="flex h-14 items-center justify-between px-4">
               <Link
-                href="#"
+                to="/inbox"
+                onClick={() => handleNavClick("inbox")}
                 className="flex items-center gap-2"
                 prefetch={false}
               >
@@ -52,7 +59,8 @@ export default function Home() {
             </div>
             <nav className="grid gap-2 px-4 py-6">
               <Link
-                href="#"
+                to="/inbox"
+                onClick={() => handleNavClick("inbox")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
@@ -60,7 +68,8 @@ export default function Home() {
                 Inbox
               </Link>
               <Link
-                href="#"
+                to="/sentMail"
+                onClick={() => handleNavClick("sent")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
@@ -68,7 +77,8 @@ export default function Home() {
                 Sent
               </Link>
               <Link
-                href="#"
+                to="/drafts"
+                onClick={() => handleNavClick("drafts")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
@@ -76,7 +86,8 @@ export default function Home() {
                 Drafts
               </Link>
               <Link
-                href="#"
+                to="/trash"
+                onClick={() => handleNavClick("trash")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
@@ -94,7 +105,7 @@ export default function Home() {
             </nav>
           </SheetContent>
         </Sheet>
-        <Link href="#" className="flex items-center gap-2" prefetch={false}>
+        <Link to="/" className="flex items-center gap-2" prefetch={false}>
           <MailIcon className="h-6 w-6" />
           <span className="text-lg font-semibold">MailBox</span>
         </Link>
@@ -116,9 +127,6 @@ export default function Home() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -132,8 +140,9 @@ export default function Home() {
               Compose
             </Button>
             <nav className="grid gap-1">
-              <Link
-                href="#"
+              <NavLink
+                to="/inbox"
+                onClick={() => handleNavClick("inbox")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
@@ -142,17 +151,19 @@ export default function Home() {
                 <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   12
                 </Badge>
-              </Link>
-              <Link
-                href="#"
+              </NavLink>
+              <NavLink
+                to="/sentMail"
+                onClick={() => handleNavClick("sent")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
                 <SendIcon className="h-5 w-5" />
                 Sent
-              </Link>
+              </NavLink>
               <Link
-                href="#"
+                to="/drafts"
+                onClick={() => handleNavClick("drafts")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
@@ -160,7 +171,8 @@ export default function Home() {
                 Drafts
               </Link>
               <Link
-                href="#"
+                to="/trash"
+                onClick={() => handleNavClick("trash")}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 prefetch={false}
               >
@@ -197,340 +209,19 @@ export default function Home() {
             </nav>
           </div>
         </aside>
-        <main className="flex-1 overflow-y-auto">
-          <div className="grid gap-4 p-4 md:p-6">
-            <div className="flex items-center gap-2 ">
-              <Input
-                type="search"
-                placeholder="Search emails..."
-                className="flex-1 bg-muted text-muted-foreground rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-              <Button onClick={toggleComposes} className="block md:hidden">
-                Compose
-              </Button>
-            </div>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">John Doe</div>
-                <div className="text-xs text-muted-foreground">2 days ago</div>
-              </div>
-              <div className="font-medium">Re: Important Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hi John, I wanted to follow up on the important update I sent
-                earlier this week. Please let me know if you have any questions
-                or concerns.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Jane Smith</div>
-                <div className="text-xs text-muted-foreground">1 hour ago</div>
-              </div>
-              <div className="font-medium">New Project Kickoff</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Dear team, I'm excited to announce that we're kicking off a new
-                project this week. Please check your calendars for the upcoming
-                meeting.
-              </p>
-            </article>
-            <article className="flex flex-col gap-2 p-4 border rounded-lg hover:bg-accent transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">Support Team</div>
-                <div className="text-xs text-muted-foreground">3 days ago</div>
-              </div>
-              <div className="font-medium">Account Update</div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                Hello, we have some important updates regarding your account.
-                Please log in to your dashboard to review the changes.
-              </p>
-            </article>
-          </div>
+        <main className="flex flex-1 flex-col">
+          {/* <div className="px-6 py-4">
+            <h1 className="text-2xl font-semibold">
+              {messageType.charAt(0).toUpperCase() + messageType.slice(1)}{" "}
+              Messages
+            </h1>
+          </div> */}
+          <Outlet />
         </main>
       </div>
     </div>
   );
 }
-
 function DraftingCompassIcon(props) {
   return (
     <svg

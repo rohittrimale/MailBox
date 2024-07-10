@@ -15,17 +15,22 @@ import { Editor } from "react-draft-wysiwyg";
 import draftToHtml from "draftjs-to-html";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { sendEmail } from "../../slice/mailBoxSlice";
+import { current } from "@reduxjs/toolkit";
 
 export default function ComposeMail({ setToggleCompose }) {
+  const user = useSelector((state) => state.user.user);
+  console.log(user);
+  const dispatch = useDispatch();
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [formData, setFormData] = useState({
     to: "",
-    cc: "",
     subject: "",
     body: "",
   });
 
-  const hideComponseMail = () => {
+  const hideComposeMail = () => {
     setToggleCompose(false);
   };
 
@@ -44,36 +49,45 @@ export default function ComposeMail({ setToggleCompose }) {
     });
   };
 
-  const sendMail = async () => {
-    try {
-      const res = await axios.post(
-        "https://satiya-585fe-default-rtdb.firebaseio.com/mail.json",
-        formData
-      );
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    sendMail();
+    const sender = user;
+    let mailData = {
+      sender,
+      reciver: formData.to,
+      subject: formData.subject,
+      mail: formData.body,
+      read: false,
+      starred: false,
+      time: new Date(),
+      send: true,
+      receive: false,
+    };
 
-    // Process the form data, e.g., send an email
-    console.log(formData);
+    console.log(mailData);
+
+    if (!formData.to) {
+      console.error("Receiver email is missing");
+      return;
+    }
+    const data = await dispatch(
+      sendEmail({ senderEmail: sender.email, emailData: mailData })
+    );
+    console.log(data);
+    hideComposeMail();
+
   };
 
   return (
-    <div className="fixed z-30 bottom-50 right-2 w-96 h-96 pt-2">
-      <div className="absolute top-8 right-4" onClick={hideComponseMail}>
+    <div className="fixed z-30 bottom-50 right-2 w-full sm:w-96 h-96 pt-2">
+      <div className="absolute top-8 right-4" onClick={hideComposeMail}>
         <XIcon className="h-5 w-5" />
       </div>
       <div className="flex flex-col bg-background">
         <Card className="w-full pt-2 max-w-2xl mt-4">
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid gap-2">
                 <div className="space-y-2 ">
                   <Label htmlFor="to">To</Label>
                   <Input
@@ -82,15 +96,6 @@ export default function ComposeMail({ setToggleCompose }) {
                     value={formData.to}
                     onChange={handleChange}
                     required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cc">CC</Label>
-                  <Input
-                    id="cc"
-                    placeholder="Enter email addresses"
-                    value={formData.cc}
-                    onChange={handleChange}
                   />
                 </div>
               </div>

@@ -75,7 +75,7 @@ export const sendEmailVerification = createAsyncThunk(
 );
 
 const initialState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user")),
   token: "",
   loading: false,
   isVerifyUser: false,

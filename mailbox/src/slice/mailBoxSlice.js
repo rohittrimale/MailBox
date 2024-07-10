@@ -107,9 +107,10 @@ export const deleteEmail = createAsyncThunk(
     const userEmail = email.substring(0, email.indexOf("@"));
     const folder = isSent ? "sentMail" : "receivedMail";
     try {
-      await axios.delete(
+      const data = await axios.delete(
         `https://satiya-585fe-default-rtdb.firebaseio.com/mail/${userEmail}/${folder}/${id}.json`
       );
+      console.log(data);
       return { id, isSent };
     } catch (error) {
       return rejectWithValue(error.response.data);

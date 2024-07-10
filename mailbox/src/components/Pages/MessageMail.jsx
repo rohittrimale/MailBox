@@ -5,7 +5,7 @@ import {
   CardContent,
   CardFooter,
 } from "../../components/ui/card";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Avatar,
   AvatarImage,
@@ -16,6 +16,7 @@ import axios from "axios";
 import HtmlRenderer from "../HtmlRenderer";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteEmail,
   fetchSentMessage,
   updateEmailReadStatus,
 } from "../../slice/mailBoxSlice";
@@ -27,6 +28,7 @@ export default function MessageMail() {
   const user = useSelector((state) => state.user.user);
   const [messageData, setMessageData] = useState();
   console.log(location.pathname);
+  const navigate = useNavigate();
 
   const getMessageData = async () => {
     console.log(location.pathname);
@@ -52,6 +54,24 @@ export default function MessageMail() {
       );
     }
     setMessageData(data.payload);
+  };
+
+  const deleteHandler = async () => {
+    const data = await dispatch(
+      deleteEmail({ email: user.email, id: messageId, isSent: true })
+    );
+    console.log(data);
+    if (location.pathname.includes("sent")) {
+      const data = await dispatch(
+        deleteEmail({ email: user.email, id: messageId, isSent: true })
+      );
+      navigate("/sentMail");
+    } else {
+      const data = await dispatch(
+        deleteEmail({ email: user.email, id: messageId, isSent: false })
+      );
+      navigate("/inbox");
+    }
   };
 
   useEffect(() => {
@@ -89,14 +109,12 @@ export default function MessageMail() {
                   <ForwardIcon className="h-5 w-5" />
                   <span className="sr-only">Forward</span>
                 </Button>
-                <Button variant="ghost" size="icon">
-                  <MoveVerticalIcon className="h-5 w-5" />
-                  <span className="sr-only">More</span>
-                </Button>
+
                 <Button
                   variant="ghost"
                   size="icon"
                   className="text-destructive"
+                  onClick={deleteHandler}
                 >
                   <Trash2Icon className="h-5 w-5" />
                   <span className="sr-only">Delete</span>
